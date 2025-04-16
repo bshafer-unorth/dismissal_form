@@ -16,6 +16,10 @@
       padding: 10px;
       font-size: 1em;
     }
+    #responseMessage {
+      font-weight: bold;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
@@ -57,16 +61,17 @@
       e.preventDefault();
 
       const data = {
-        studentNumber: document.getElementById("studentNumber").value,
+        studentNumber: document.getElementById("studentNumber").value.trim(),
         defaultDismissal: document.getElementById("defaultDismissal").value,
         todayChange: document.getElementById("todayChange").value,
-        newBusNumber: document.getElementById("newBusNumber").value,
+        newBusNumber: document.getElementById("newBusNumber").value.trim(),
         changeDate: document.getElementById("changeDate").value,
-        notes: document.getElementById("notes").value
+        notes: document.getElementById("notes").value.trim()
       };
 
-      fetch("https://script.google.com/macros/s/AKfycbwEofocAN14KzQNTFXQFJY6U88-_tt4YACwoulSDopcp5DotgSYhwf9fKeddvVKZa91/exec", {
+      console.log("Sending:", JSON.stringify(data));  // Debug info
 
+      fetch("https://script.google.com/macros/s/AKfycbwEofocAN14KzQNTFXQFJY6U88-_tt4YACwoulSDopcp5DotgSYhwf9fKeddvVKZa91/exec", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -75,12 +80,20 @@
       })
       .then(res => res.text())
       .then(response => {
-        document.getElementById("responseMessage").innerText = "Change submitted successfully!";
-        document.getElementById("dismissalForm").reset();
+        console.log("Response from server:", response);  // Debug info
+        if (response.includes("Success")) {
+          document.getElementById("responseMessage").innerText = "Change submitted successfully!";
+          document.getElementById("responseMessage").style.color = "green";
+          document.getElementById("dismissalForm").reset();
+        } else {
+          document.getElementById("responseMessage").innerText = "Submission error: " + response;
+          document.getElementById("responseMessage").style.color = "red";
+        }
       })
       .catch(error => {
-        document.getElementById("responseMessage").innerText = "Error submitting change.";
-        console.error("Error:", error);
+        console.error("Error submitting form:", error);
+        document.getElementById("responseMessage").innerText = "Error submitting change. See console for details.";
+        document.getElementById("responseMessage").style.color = "red";
       });
     });
   </script>
