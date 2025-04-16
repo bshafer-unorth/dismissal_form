@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dismissal Change Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h2>Dismissal Change Form</h2>
+  <form id="dismissalForm">
+    <label for="studentNumber">Student Number</label>
+    <input type="text" id="studentNumber" name="studentNumber" required>
+
+    <label for="defaultDismissal">Default Dismissal</label>
+    <select id="defaultDismissal" name="defaultDismissal" required>
+      <option value="">--Select--</option>
+      <option value="Bus">Bus</option>
+      <option value="Crosswalk">Crosswalk</option>
+    </select>
+
+    <label for="todayChange">Change To</label>
+    <select id="todayChange" name="todayChange" required>
+      <option value="">--Select--</option>
+      <option value="Bus">Bus</option>
+      <option value="Crosswalk">Crosswalk</option>
+    </select>
+
+    <label for="newBusNumber">If Bus, enter new bus number</label>
+    <input type="text" id="newBusNumber" name="newBusNumber">
+
+    <label for="changeDate">Date of Change</label>
+    <input type="date" id="changeDate" name="changeDate" required>
+
+    <label for="notes">Optional Notes</label>
+    <textarea id="notes" name="notes" rows="3"></textarea>
+
+    <button type="submit">Submit Change</button>
+  </form>
+
+  <p id="responseMessage"></p>
+
+  <script>
+    document.getElementById("dismissalForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const data = {
+        studentNumber: document.getElementById("studentNumber").value,
+        defaultDismissal: document.getElementById("defaultDismissal").value,
+        todayChange: document.getElementById("todayChange").value,
+        newBusNumber: document.getElementById("newBusNumber").value,
+        changeDate: document.getElementById("changeDate").value,
+        notes: document.getElementById("notes").value
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbx9r9PspH8YLNGHbwEmhgCO0xz4xd30qyS08vHhnSc/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.text())
+      .then(response => {
+        document.getElementById("responseMessage").innerText = "Change submitted successfully!";
+        document.getElementById("dismissalForm").reset();
+      })
+      .catch(error => {
+        document.getElementById("responseMessage").innerText = "Error submitting change.";
+        console.error("Error:", error);
+      });
+    });
+  </script>
+</body>
+</html>
